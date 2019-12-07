@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"database/sql"
 	"errors"
 	"strings"
 	"time"
@@ -21,7 +22,7 @@ func (us *UserStore) GetByID(id string) (*user.User, error) {
 		return nil, errors.New("must provide a id")
 	}
 
-	query := squirrel.Select("*").From("users").Where("id = ? and deleted_at is null", id).Suffix("returning *")
+	query := squirrel.Select("*").From("users").Where("id = ? and deleted_at is null", id)
 
 	sql, args, err := query.PlaceholderFormat(squirrel.Dollar).ToSql()
 	if err != nil {
@@ -30,7 +31,7 @@ func (us *UserStore) GetByID(id string) (*user.User, error) {
 
 	row := us.Store.QueryRowx(sql, args...)
 
-	var c *user.User
+	c := &user.User{}
 
 	if err := row.StructScan(c); err != nil {
 		return nil, err
@@ -45,7 +46,7 @@ func (us *UserStore) GetByEmail(email string) (*user.User, error) {
 		return nil, errors.New("must provide a email")
 	}
 
-	query := squirrel.Select("*").From("users").Where("email = ? and deleted_at is null", email).Suffix("returning *")
+	query := squirrel.Select("*").From("users").Where("email = ? and deleted_at is null", email)
 
 	sql, args, err := query.PlaceholderFormat(squirrel.Dollar).ToSql()
 	if err != nil {
@@ -54,7 +55,7 @@ func (us *UserStore) GetByEmail(email string) (*user.User, error) {
 
 	row := us.Store.QueryRowx(sql, args...)
 
-	var c *user.User
+	c := &user.User{}
 
 	if err := row.StructScan(c); err != nil {
 		return nil, err
@@ -132,19 +133,14 @@ func (us *UserStore) Delete(id string) error {
 		return errors.New("must provide a id")
 	}
 
-	query := squirrel.Update("users").Set("deleted_at = ?", time.Now()).Where("id = ?", id).Suffix("returning *")
-	sql, args, err := query.PlaceholderFormat(squirrel.Dollar).ToSql()
-	if err != nil {
-		return nil
-	}
+	c := &user.User{}
 
-	var u *user.User
-
-	row := us.Store.QueryRowx(sql, args...)
-	if err := row.StructScan(u); err != nil {
+	row := us.Store.QueryRowx("update users set deleted_at = $1 where id = $2", time.Now(), id)
+	if err := row.StructScan(c); err != nil {
+		if err == sql.ErrNoRows {
+			return nil
+		}
 		return err
 	}
-
 	return nil
-
 }
