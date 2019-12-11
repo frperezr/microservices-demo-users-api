@@ -45,6 +45,16 @@ func (us *Service) GetByID(ctx context.Context, gr *pb.GetUserByIDRequest) (*pb.
 	user, err := us.userSvc.GetByID(id)
 	if err != nil {
 		log.Println(fmt.Sprintf("[User Service][GetById][Error] %v", err.Error()))
+		if err.Error() == "sql: no rows in result set" {
+			return &pb.GetUserByIDResponse{
+				Data: nil,
+				Error: &pb.Error{
+					Code:    404,
+					Message: fmt.Sprintf("user with id %v not found", id),
+				},
+			}, nil
+		}
+
 		return &pb.GetUserByIDResponse{
 			Data: nil,
 			Error: &pb.Error{
@@ -82,6 +92,16 @@ func (us *Service) GetByEmail(ctx context.Context, gr *pb.GetUserByEmailRequest)
 	user, err := us.userSvc.GetByEmail(email)
 	if err != nil {
 		log.Println(fmt.Sprintf("[User Service][GetByEmail][Error] %v", err.Error()))
+		if err.Error() == "sql: no rows in result set" {
+			return &pb.GetUserByEmailResponse{
+				Data: nil,
+				Error: &pb.Error{
+					Code:    404,
+					Message: fmt.Sprintf("user with email %v not found", email),
+				},
+			}, nil
+		}
+
 		return &pb.GetUserByEmailResponse{
 			Data: nil,
 			Error: &pb.Error{
