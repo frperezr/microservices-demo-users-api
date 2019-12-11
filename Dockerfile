@@ -5,6 +5,8 @@ RUN apk add --update ca-certificates
 WORKDIR /src/users-api
 
 COPY bin/noken-users-api /usr/bin/noken-users-api
+COPY bin/goose /usr/bin/goose
+COPY bin/wait-db /usr/bin/wait-db
 
 COPY database/migrations/* /src/users-api/migrations/
 
