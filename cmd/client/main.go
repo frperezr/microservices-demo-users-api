@@ -169,11 +169,11 @@ func GetByEmail(us pb.UserServiceClient, args []string) (string, error) {
 	return string(json), nil
 }
 
-// Create make a new user
+// Create makes a new user
 func Create(us pb.UserServiceClient, args []string) (string, error) {
 	if len(args) != 1 {
 		flag.Usage()
-		return "", errors.New("missing data param")
+		return "", errors.New("missing user param")
 	}
 
 	jsonStr := args[0]
@@ -200,11 +200,11 @@ func Create(us pb.UserServiceClient, args []string) (string, error) {
 	return string(json), nil
 }
 
-// Update modify an existing user
+// Update modifies an existing user
 func Update(us pb.UserServiceClient, args []string) (string, error) {
 	if len(args) != 1 {
 		flag.Usage()
-		return "", errors.New("missing data param")
+		return "", errors.New("missing user param")
 	}
 
 	jsonStr := args[0]
@@ -242,13 +242,23 @@ func Delete(us pb.UserServiceClient, args []string) (string, error) {
 		return "", errors.New("missing id param")
 	}
 
+	jsonStr := args[0]
+	id := struct {
+		ID string `json:"id"`
+	}{}
+
+	err := json.Unmarshal([]byte(jsonStr), &id)
+	if err != nil {
+		return "", errors.New("invalid JSON")
+	}
+
 	res, err := us.Delete(context.Background(), &pb.DeleteUserRequest{
-		UserId: args[0],
+		UserId: id.ID,
 	})
 
 	if err != nil {
 		if strings.Contains(err.Error(), "sql: no rows in result set") {
-			return "", fmt.Errorf("user with id = %v not found", args[0])
+			return "", fmt.Errorf("user with id = %v not found", id.ID)
 		}
 
 		return "", errors.New(err.Error())
