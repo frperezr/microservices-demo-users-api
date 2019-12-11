@@ -46,7 +46,7 @@ docker d: build-linux build-linux-client
 	@echo "[copy] Copy parent bin..."
 	@cp ../../bin/goose ../../bin/wait-db bin
 	@echo "[docker] Building image..."
-	@docker build -t $(SVC):$(VERSION) .
+	@docker build -t $(USER)/$(SVC):$(VERSION) .
 	@echo "[remove] Removing parent bin..."
 	@rm bin/goose bin/wait-db
 
