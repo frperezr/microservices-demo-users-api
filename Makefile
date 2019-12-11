@@ -4,7 +4,6 @@ SVC=noken-users-api
 
 BIN=$(PWD)/bin/$(SVC)
 BIN_PATH=$(PWD)/bin
-GOOSE_PATH=$(GOPATH)/src/github.com/pressly/goose/cmd/goose
 
 DB_USER=postgres
 DB_NAME=postgres
@@ -34,12 +33,6 @@ build b:
 build-client bc:
 	@echo "[build] Building client..."
 	@cd cmd/client && $(GO) build -o $(BIN_PATH)/client -ldflags=$(LDFLAGS) -tags $(TAGS)
-
-build-goose bg:
-	@cd $(GOOSE_PATH) && GOOS=linux GOARCH=amd64 $(GO) build -o $(BIN_PATH)/goose
-
-build-wait-db bw:
-	@cd cmd/wait-db && GOOS=linux GOARCH=amd64 $(GO) build -o $(BIN_PATH)/wait-db
 
 build-linux bl:
 	@echo "[build-linux] Building service..."
