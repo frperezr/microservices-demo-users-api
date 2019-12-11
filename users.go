@@ -39,3 +39,16 @@ func (u *User) ToProto() *pb.User {
 		UpdatedAt: u.UpdatedAt.Unix(),
 	}
 }
+
+// FromProto ...
+func (u *User) FromProto(uu *pb.User) *User {
+	return &User{
+		ID:        uu.Id,
+		Email:     uu.Email,
+		Name:      uu.Name,
+		LastName:  uu.LastName,
+		Password:  uu.Password,
+		CreatedAt: time.Unix(uu.CreatedAt, 0),
+		UpdatedAt: time.Unix(uu.UpdatedAt, 0),
+	}
+}
