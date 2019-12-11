@@ -52,31 +52,26 @@ func main() {
 		result, err = GetByID(c, flag.Args()[1:])
 		if err != nil {
 			fmt.Print(fmt.Sprintf(`{"error": "%v"}`, err.Error()))
-			os.Exit(1)
 		}
 	case "getByEmail":
 		result, err = GetByEmail(c, flag.Args()[1:])
 		if err != nil {
 			fmt.Print(fmt.Sprintf(`{"error": "%v"}`, err.Error()))
-			os.Exit(1)
 		}
 	case "create":
 		result, err = Create(c, flag.Args()[1:])
 		if err != nil {
 			fmt.Print(fmt.Sprintf(`{"error": "%v"}`, err.Error()))
-			os.Exit(1)
 		}
 	case "delete":
 		result, err = Delete(c, flag.Args()[1:])
 		if err != nil {
 			fmt.Print(fmt.Sprintf(`{"error": "%v"}`, err.Error()))
-			os.Exit(1)
 		}
 	case "update":
 		result, err = Update(c, flag.Args()[1:])
 		if err != nil {
 			fmt.Print(fmt.Sprintf(`{"error": "%v"}`, err.Error()))
-			os.Exit(1)
 		}
 	default:
 		fmt.Print(`{"error": "invalid command"}`)
@@ -95,22 +90,22 @@ func GetByID(us pb.UserServiceClient, args []string) (string, error) {
 	}
 
 	jsonStr := args[0]
-	id := struct {
+	data := struct {
 		ID string `json:"id"`
 	}{}
 
-	err := json.Unmarshal([]byte(jsonStr), &id)
+	err := json.Unmarshal([]byte(jsonStr), &data)
 	if err != nil {
 		return "", errors.New("invalid JSON")
 	}
 
 	res, err := us.GetByID(context.Background(), &pb.GetUserByIDRequest{
-		Id: id.ID,
+		Id: data.ID,
 	})
 
 	if err != nil {
 		if strings.Contains(err.Error(), "sql: no rows in result set") {
-			return "", fmt.Errorf("user with id = %v not found", id.ID)
+			return "", fmt.Errorf("user with id = %v not found", data.ID)
 		}
 
 		return "", fmt.Errorf(err.Error())
@@ -118,7 +113,7 @@ func GetByID(us pb.UserServiceClient, args []string) (string, error) {
 
 	if res.Error != nil {
 		if strings.Contains(res.Error.Message, "sql: no rows in result set") {
-			return "", fmt.Errorf("user with id = %v not found", id.ID)
+			return "", fmt.Errorf("user with id = %v not found", data.ID)
 		}
 
 		return "", fmt.Errorf(err.Error())
@@ -140,22 +135,22 @@ func GetByEmail(us pb.UserServiceClient, args []string) (string, error) {
 	}
 
 	jsonStr := args[0]
-	email := struct {
+	data := struct {
 		Email string `json:"email"`
 	}{}
 
-	err := json.Unmarshal([]byte(jsonStr), &email)
+	err := json.Unmarshal([]byte(jsonStr), &data)
 	if err != nil {
 		return "", errors.New("invalid JSON")
 	}
 
 	res, err := us.GetByEmail(context.Background(), &pb.GetUserByEmailRequest{
-		Email: email.Email,
+		Email: data.Email,
 	})
 
 	if err != nil {
 		if strings.Contains(err.Error(), "sql: no rows in result set") {
-			return "", fmt.Errorf("user with email = %v not found", email.Email)
+			return "", fmt.Errorf("user with email = %v not found", data.Email)
 		}
 
 		return "", errors.New(err.Error())
@@ -177,19 +172,25 @@ func Create(us pb.UserServiceClient, args []string) (string, error) {
 	}
 
 	jsonStr := args[0]
-	user := users.User{}
+	data := struct {
+		User *users.User `json:"user"`
+	}{}
 
-	err := json.Unmarshal([]byte(jsonStr), &user)
+	err := json.Unmarshal([]byte(jsonStr), &data)
 	if err != nil {
 		return "", errors.New("invalid JSON")
 	}
 
 	res, err := us.Create(context.Background(), &pb.CreateUserRequest{
-		Data: user.ToProto(),
+		Data: data.User.ToProto(),
 	})
 
 	if err != nil {
 		return "", errors.New(err.Error())
+	}
+
+	if res.GetError() != nil {
+		return "", errors.New(res.GetError().GetMessage())
 	}
 
 	json, err := json.Marshal(res.Data)
@@ -208,20 +209,22 @@ func Update(us pb.UserServiceClient, args []string) (string, error) {
 	}
 
 	jsonStr := args[0]
-	user := users.User{}
+	data := struct {
+		User *users.User `json:"user"`
+	}{}
 
-	err := json.Unmarshal([]byte(jsonStr), &user)
+	err := json.Unmarshal([]byte(jsonStr), &data)
 	if err != nil {
 		return "", errors.New("invalid JSON")
 	}
 
 	res, err := us.Update(context.Background(), &pb.UpdateUserRequest{
-		Data: user.ToProto(),
+		Data: data.User.ToProto(),
 	})
 
 	if err != nil {
 		if strings.Contains(err.Error(), "sql: no rows in result set") {
-			return "", fmt.Errorf("user with id = %v not found", user.ID)
+			return "", fmt.Errorf("user with id = %v not found", data.User.ID)
 		}
 
 		return "", errors.New(err.Error())
@@ -243,22 +246,22 @@ func Delete(us pb.UserServiceClient, args []string) (string, error) {
 	}
 
 	jsonStr := args[0]
-	id := struct {
+	data := struct {
 		ID string `json:"id"`
 	}{}
 
-	err := json.Unmarshal([]byte(jsonStr), &id)
+	err := json.Unmarshal([]byte(jsonStr), &data)
 	if err != nil {
 		return "", errors.New("invalid JSON")
 	}
 
 	res, err := us.Delete(context.Background(), &pb.DeleteUserRequest{
-		UserId: id.ID,
+		UserId: data.ID,
 	})
 
 	if err != nil {
 		if strings.Contains(err.Error(), "sql: no rows in result set") {
-			return "", fmt.Errorf("user with id = %v not found", id.ID)
+			return "", fmt.Errorf("user with id = %v not found", data.ID)
 		}
 
 		return "", errors.New(err.Error())
