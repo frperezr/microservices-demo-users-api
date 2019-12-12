@@ -8,7 +8,6 @@ import (
 	"github.com/frperezr/noken-test/src/users-api"
 	"github.com/frperezr/noken-test/src/users-api/database"
 	"github.com/frperezr/noken-test/src/users-api/service"
-	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
 )
 
@@ -175,23 +174,11 @@ func (us *Service) Create(ctx context.Context, gr *pb.CreateUserRequest) (*pb.Cr
 			}, nil
 		}
 
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-		if err != nil {
-			log.Println(fmt.Sprintf("[User Service][Create][Error] %v", err.Error()))
-			return &pb.CreateUserResponse{
-				Data: nil,
-				Error: &pb.Error{
-					Code:    500,
-					Message: "could not generate hashed password",
-				},
-			}, nil
-		}
-
 		user := &users.User{
 			Email:    email,
 			Name:     name,
 			LastName: lastName,
-			Password: string(hashedPassword),
+			Password: password,
 		}
 
 		if err := us.userSvc.Create(user); err != nil {
@@ -244,6 +231,17 @@ func (us *Service) Update(ctx context.Context, gr *pb.UpdateUserRequest) (*pb.Up
 	user, err := us.userSvc.GetByID(id)
 	if err != nil {
 		log.Println(fmt.Sprintf("[User Service][Update][Error] err = %v", err.Error()))
+
+		if err.Error() == "sql: no rows in result set" {
+			return &pb.UpdateUserResponse{
+				Data: nil,
+				Error: &pb.Error{
+					Code:    404,
+					Message: fmt.Sprintf("user with id = %v not found", id),
+				},
+			}, nil
+		}
+
 		return &pb.UpdateUserResponse{
 			Data: nil,
 			Error: &pb.Error{
