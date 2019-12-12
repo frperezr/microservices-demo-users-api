@@ -153,10 +153,18 @@ func GetByEmail(us pb.UserServiceClient, args []string) (string, error) {
 			return "", fmt.Errorf("user with email = %v not found", data.Email)
 		}
 
-		return "", errors.New(err.Error())
+		return "", err
 	}
 
-	json, err := json.Marshal(res.Data)
+	if res.GetError() != nil {
+		if strings.Contains(res.GetError().GetMessage(), "sql: no rows in result set") {
+			return "", fmt.Errorf("user with email = %v not found", data.Email)
+		}
+
+		return "", errors.New(res.GetError().GetMessage())
+	}
+
+	json, err := json.Marshal(res.GetData())
 	if err != nil {
 		return "", errors.New("cant marshal data")
 	}
@@ -186,7 +194,7 @@ func Create(us pb.UserServiceClient, args []string) (string, error) {
 	})
 
 	if err != nil {
-		return "", errors.New(err.Error())
+		return "", err
 	}
 
 	if res.GetError() != nil {
@@ -227,7 +235,7 @@ func Update(us pb.UserServiceClient, args []string) (string, error) {
 			return "", fmt.Errorf("user with id = %v not found", data.User.ID)
 		}
 
-		return "", errors.New(err.Error())
+		return "", err
 	}
 
 	json, err := json.Marshal(res.Data)
@@ -264,7 +272,7 @@ func Delete(us pb.UserServiceClient, args []string) (string, error) {
 			return "", fmt.Errorf("user with id = %v not found", data.ID)
 		}
 
-		return "", errors.New(err.Error())
+		return "", err
 	}
 
 	json, err := json.Marshal(res.Data)
