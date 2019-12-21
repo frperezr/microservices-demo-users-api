@@ -43,12 +43,9 @@ build-linux-client blc:
 	@cd cmd/client && GOOS=linux GOARCH=amd64 $(GO) build -o $(BIN_PATH)/client -ldflags=$(LDFLAGS) -tags $(TAGS)
 
 docker d: build-linux build-linux-client
-	@echo "[copy] Copy parent bin..."
-	@cp ../../bin/goose ../../bin/wait-db bin
 	@echo "[docker] Building image..."
 	@docker build -t $(USER)/$(SVC):$(VERSION) .
 	@echo "[remove] Removing parent bin..."
-	@rm bin/goose bin/wait-db
 
 docker-login dl:
 	@echo "[docker] Login to docker..."
