@@ -51,7 +51,7 @@ docker-login dl:
 	@echo "[docker] Login to docker..."
 	@$$(aws ecr get-login --no-include-email)
 
-push p: docker docker-login
+push p: docker
 	@echo "[docker] pushing $(USER)/$(SVC):$(VERSION)"
 	@docker tag $(USER)/$(SVC):$(VERSION) $(USER)/$(SVC):$(VERSION)
 	@docker push $(USER)/$(SVC):$(VERSION)
