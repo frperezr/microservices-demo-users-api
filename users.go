@@ -3,7 +3,7 @@ package users
 import (
 	"time"
 
-	pb "github.com/frperezr/noken-test/pb"
+	pb "github.com/frperezr/microservices-demo/pb"
 )
 
 // User is the main struct of the users api

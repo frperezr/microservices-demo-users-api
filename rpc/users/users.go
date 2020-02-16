@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 
-	pb "github.com/frperezr/noken-test/pb"
-	"github.com/frperezr/noken-test/src/users-api"
-	"github.com/frperezr/noken-test/src/users-api/database"
-	"github.com/frperezr/noken-test/src/users-api/service"
+	pb "github.com/frperezr/microservices-demo/pb"
+	"github.com/frperezr/microservices-demo/src/users-api"
+	"github.com/frperezr/microservices-demo/src/users-api/database"
+	"github.com/frperezr/microservices-demo/src/users-api/service"
 	"golang.org/x/net/context"
 )
 

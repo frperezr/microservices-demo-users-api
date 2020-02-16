@@ -1,8 +1,8 @@
 package database
 
 import (
-	user "github.com/frperezr/noken-test/src/users-api"
-	"github.com/frperezr/noken-test/src/users-api/database/postgres"
+	user "github.com/frperezr/microservices-demo/src/users-api"
+	"github.com/frperezr/microservices-demo/src/users-api/database/postgres"
 	"github.com/jmoiron/sqlx"
 )
 

@@ -1,6 +1,6 @@
 VERSION=0.0.1
 USER=frperezr
-SVC=noken-users-api
+SVC=microservices-demo-users-api
 
 BIN=$(PWD)/bin/$(SVC)
 BIN_PATH=$(PWD)/bin

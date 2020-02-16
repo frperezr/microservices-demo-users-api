@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	pb "github.com/frperezr/noken-test/pb"
-	"github.com/frperezr/noken-test/src/users-api"
+	pb "github.com/frperezr/microservices-demo/pb"
+	"github.com/frperezr/microservices-demo/src/users-api"
 	"google.golang.org/grpc"
 )
 

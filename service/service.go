@@ -1,8 +1,8 @@
 package service
 
 import (
-	user "github.com/frperezr/noken-test/src/users-api"
-	"github.com/frperezr/noken-test/src/users-api/database"
+	user "github.com/frperezr/microservices-demo/src/users-api"
+	"github.com/frperezr/microservices-demo/src/users-api/database"
 )
 
 // New ...

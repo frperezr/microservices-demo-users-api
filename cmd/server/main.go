@@ -6,10 +6,10 @@ import (
 	"net"
 	"os"
 
-	pb "github.com/frperezr/noken-test/pb"
+	pb "github.com/frperezr/microservices-demo/pb"
 
-	"github.com/frperezr/noken-test/src/users-api/database"
-	userService "github.com/frperezr/noken-test/src/users-api/rpc/users"
+	"github.com/frperezr/microservices-demo/src/users-api/database"
+	userService "github.com/frperezr/microservices-demo/src/users-api/rpc/users"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
